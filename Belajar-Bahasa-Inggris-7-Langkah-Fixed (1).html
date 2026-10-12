@@ -1,0 +1,839 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>EnglishPro 7 Langkah - Belajar Bahasa Inggris Interaktif</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+<style>
+    @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap');
+    
+    * {
+        font-family: 'Plus Jakarta Sans', sans-serif;
+    }
+    
+    .gradient-bg {
+        background: linear-gradient(135deg, #0ea5e9 0%, #06b6d4 50%, #10b981 100%);
+    }
+    
+    .tab-content {
+        display: none;
+        animation: fadeIn 0.4s ease-in-out;
+    }
+    
+    .tab-content.active {
+        display: block;
+    }
+    
+    @keyframes fadeIn {
+        from { opacity: 0; transform: translateY(10px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+    
+    .quiz-option {
+        transition: all 0.2s ease;
+        cursor: pointer;
+    }
+    
+    .quiz-option:hover:not(.disabled) {
+        transform: translateX(4px);
+        background-color: #e0f2fe;
+    }
+    
+    .quiz-option.selected {
+        background-color: #dbeafe !important;
+        border-color: #3b82f6 !important;
+    }
+    
+    .quiz-option.correct {
+        background-color: #dcfce7 !important;
+        border-color: #22c55e !important;
+    }
+    
+    .quiz-option.wrong {
+        background-color: #fee2e2 !important;
+        border-color: #ef4444 !important;
+    }
+    
+    .quiz-option.disabled {
+        pointer-events: none;
+    }
+    
+    input.answer-input:focus {
+        outline: none;
+        border-color: #0ea5e9;
+        ring: 2px;
+    }
+    
+    .progress-bar {
+        transition: width 0.5s ease;
+    }
+    
+    .tab-btn.active {
+        background: #0ea5e9;
+        color: white;
+    }
+    
+    @media (max-width: 640px) {
+        .tab-btn-text {
+            display: none;
+        }
+        .tab-btn {
+            min-width: 44px;
+            justify-content: center;
+        }
+    }
+    
+    .scrollbar-hide::-webkit-scrollbar {
+        display: none;
+    }
+    .scrollbar-hide {
+        -ms-overflow-style: none;
+        scrollbar-width: none;
+    }
+</style>
+</head>
+<body class="bg-slate-50 text-slate-800">
+    <!-- Header -->
+    <header class="gradient-bg text-white shadow-lg sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 py-4">
+            <div class="flex items-center justify-between flex-wrap gap-4">
+                <div class="flex items-center gap-3">
+                    <div class="w-12 h-12 bg-white/20 backdrop-blur rounded-2xl flex items-center justify-center">
+                        <i class="fa-solid fa-graduation-cap text-xl"></i>
+                    </div>
+                    <div>
+                        <h1 class="text-xl sm:text-2xl font-bold">EnglishPro 7 Langkah</h1>
+                        <p class="text-xs sm:text-sm text-white/80">Belajar Bahasa Inggris Step by Step</p>
+                    </div>
+                </div>
+                
+                <div class="flex items-center gap-3 sm:gap-4 w-full sm:w-auto">
+                    <div class="flex-1 sm:flex-initial">
+                        <div class="flex justify-between text-xs mb-1">
+                            <span class="text-white/90">Progress Keseluruhan</span>
+                            <span class="font-semibold"><span id="total-score">0</span>/38 Soal</span>
+                        </div>
+                        <div class="w-full sm:w-48 bg-white/20 rounded-full h-2.5">
+                            <div id="progress-bar" class="bg-white h-2.5 rounded-full progress-bar" style="width: 0%"></div>
+                        </div>
+                    </div>
+                    <div class="text-center">
+                        <div class="text-2xl sm:text-3xl font-bold" id="total-percent">0%</div>
+                        <div class="text-xs text-white/80">Selesai</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Tab Navigation -->
+    <div class="bg-white border-b border-slate-200 sticky top-[92px] sm:top-[84px] z-40 shadow-sm">
+        <div class="max-w-7xl mx-auto px-2 sm:px-6">
+            <div class="flex items-center gap-1 sm:gap-2 overflow-x-auto py-3 scrollbar-hide" id="tab-container">
+                <button onclick="switchTab(0)" class="tab-btn active flex items-center gap-2 px-3 sm:px-4 py-2.5 rounded-xl text-sm font-medium whitespace-nowrap transition-all">
+                    <span class="w-6 h-6 rounded-full bg-white/30 flex items-center justify-center text-xs font-bold">1</span>
+                    <span class="tab-btn-text">Kalimat Bersarang</span>
+                </button>
+                <button onclick="switchTab(1)" class="tab-btn flex items-center gap-2 px-3 sm:px-4 py-2.5 rounded-xl text-sm font-medium whitespace-nowrap transition-all text-slate-600 hover:bg-slate-100">
+                    <span class="w-6 h-6 rounded-full bg-slate-200 flex items-center justify-center text-xs font-bold">2</span>
+                    <span class="tab-btn-text">Kata Ganti</span>
+                </button>
+                <button onclick="switchTab(2)" class="tab-btn flex items-center gap-2 px-3 sm:px-4 py-2.5 rounded-xl text-sm font-medium whitespace-nowrap transition-all text-slate-600 hover:bg-slate-100">
+                    <span class="w-6 h-6 rounded-full bg-slate-200 flex items-center justify-center text-xs font-bold">3</span>
+                    <span class="tab-btn-text">Tenses</span>
+                </button>
+                <button onclick="switchTab(3)" class="tab-btn flex items-center gap-2 px-3 sm:px-4 py-2.5 rounded-xl text-sm font-medium whitespace-nowrap transition-all text-slate-600 hover:bg-slate-100">
+                    <span class="w-6 h-6 rounded-full bg-slate-200 flex items-center justify-center text-xs font-bold">4</span>
+                    <span class="tab-btn-text">Verb/Adv/Adj</span>
+                </button>
+                <button onclick="switchTab(4)" class="tab-btn flex items-center gap-2 px-3 sm:px-4 py-2.5 rounded-xl text-sm font-medium whitespace-nowrap transition-all text-slate-600 hover:bg-slate-100">
+                    <span class="w-6 h-6 rounded-full bg-slate-200 flex items-center justify-center text-xs font-bold">5</span>
+                    <span class="tab-btn-text">Verb 1,2,3</span>
+                </button>
+                <button onclick="switchTab(5)" class="tab-btn flex items-center gap-2 px-3 sm:px-4 py-2.5 rounded-xl text-sm font-medium whitespace-nowrap transition-all text-slate-600 hover:bg-slate-100">
+                    <span class="w-6 h-6 rounded-full bg-slate-200 flex items-center justify-center text-xs font-bold">6</span>
+                    <span class="tab-btn-text">Kalimat Tenses</span>
+                </button>
+                <button onclick="switchTab(6)" class="tab-btn flex items-center gap-2 px-3 sm:px-4 py-2.5 rounded-xl text-sm font-medium whitespace-nowrap transition-all text-slate-600 hover:bg-slate-100">
+                    <span class="w-6 h-6 rounded-full bg-slate-200 flex items-center justify-center text-xs font-bold">7</span>
+                    <span class="tab-btn-text">Lanjutan</span>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Content -->
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 py-6 sm:py-8">
+        
+        <!-- Topic 1: Kalimat Bersarang -->
+        <div id="topic-0" class="tab-content active">
+            <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-6 sm:p-8 mb-6">
+                <div class="flex items-start gap-4 mb-6">
+                    <div class="w-14 h-14 gradient-bg rounded-2xl flex items-center justify-center text-white shrink-0">
+                        <i class="fa-solid fa-layer-group text-xl"></i>
+                    </div>
+                    <div class="flex-1">
+                        <h2 class="text-2xl sm:text-3xl font-bold mb-2">1. Kalimat Bersarang</h2>
+                        <p class="text-slate-600">Kalimat majemuk dengan Main Clause + Subordinate Clause</p>
+                        <div class="mt-3 flex items-center gap-2">
+                            <span class="text-sm font-medium">Skor:</span>
+                            <span class="px-3 py-1 bg-sky-100 text-sky-700 rounded-full text-sm font-semibold" id="score-0">0/5</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="space-y-4 text-slate-700 mb-8">
+                    <div class="bg-sky-50 border-l-4 border-sky-500 p-4 rounded-r-lg">
+                        <p class="font-semibold text-sky-900 mb-2">Penjelasan Singkat</p>
+                        <p class="text-sm sm:text-base">Kalimat bersarang adalah gabungan 2 klausa dengan kata penghubung. <strong>Main Clause</strong> = klausa utama yang bisa berdiri sendiri. <strong>Sub Clause</strong> = klausa tambahan yang tidak bisa berdiri sendiri, diawali kata: that, which, who, because, although, if, when, while.</p>
+                    </div>
+                    
+                    <div class="bg-slate-50 p-5 rounded-xl border border-slate-200">
+                        <h3 class="font-semibold text-lg mb-3">Contoh Struktur:</h3>
+                        <div class="space-y-2">
+                            <p class="font-medium text-sky-700">[Main Clause] + <span class="bg-yellow-200 px-1 rounded">kata penghubung</span> + [Sub Clause]</p>
+                            <p class="text-slate-700">I know <span class="bg-yellow-200 px-1 rounded">that</span> you are busy.</p>
+                            <p class="text-sm text-slate-500">→ "I know" = Main Clause, "you are busy" = Sub Clause</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Quiz -->
+                <div class="quiz">
+                    <h3 class="text-xl font-bold mb-4 flex items-center gap-2">
+                        <i class="fa-solid fa-pen-to-square text-sky-600"></i>
+                        Latihan: Identifikasi Main Clause & Sub Clause
+                    </h3>
+                    <div class="space-y-6" id="quiz-0">
+                        <!-- Soal akan diisi JS -->
+                    </div>
+                    <div id="quiz-feedback-0" class="mt-6 hidden"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Topic 2: Kata Ganti Orang -->
+        <div id="topic-1" class="tab-content">
+            <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-6 sm:p-8 mb-6">
+                <div class="flex items-start gap-4 mb-6">
+                    <div class="w-14 h-14 gradient-bg rounded-2xl flex items-center justify-center text-white shrink-0">
+                        <i class="fa-solid fa-users text-xl"></i>
+                    </div>
+                    <div class="flex-1">
+                        <h2 class="text-2xl sm:text-3xl font-bold mb-2">2. Kata Ganti Orang</h2>
+                        <p class="text-slate-600">Subject Pronouns: I, You, We, They, He, She, It</p>
+                        <div class="mt-3 flex items-center gap-2">
+                            <span class="text-sm font-medium">Skor:</span>
+                            <span class="px-3 py-1 bg-sky-100 text-sky-700 rounded-full text-sm font-semibold" id="score-1">0/7</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="overflow-x-auto mb-8">
+                    <table class="w-full text-sm sm:text-base">
+                        <thead class="bg-sky-50">
+                            <tr>
+                                <th class="p-3 text-left font-semibold">Pronoun</th>
+                                <th class="p-3 text-left font-semibold">Arti</th>
+                                <th class="p-3 text-left font-semibold">Penggunaan</th>
+                                <th class="p-3 text-left font-semibold">Contoh</th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y divide-slate-200">
+                            <tr><td class="p-3 font-medium text-sky-600">I</td><td class="p-3">Saya</td><td class="p-3">Orang pertama tunggal</td><td class="p-3">I am happy</td></tr>
+                            <tr><td class="p-3 font-medium text-sky-600">You</td><td class="p-3">Kamu/Kalian</td><td class="p-3">Orang kedua</td><td class="p-3">You are smart</td></tr>
+                            <tr><td class="p-3 font-medium text-sky-600">We</td><td class="p-3">Kami/Kita</td><td class="p-3">Orang pertama jamak</td><td class="p-3">We study together</td></tr>
+                            <tr><td class="p-3 font-medium text-sky-600">They</td><td class="p-3">Mereka</td><td class="p-3">Orang ketiga jamak</td><td class="p-3">They play football</td></tr>
+                            <tr><td class="p-3 font-medium text-sky-600">He</td><td class="p-3">Dia (Laki-laki)</td><td class="p-3">Orang ketiga tunggal</td><td class="p-3">He is a teacher</td></tr>
+                            <tr><td class="p-3 font-medium text-sky-600">She</td><td class="p-3">Dia (Perempuan)</td><td class="p-3">Orang ketiga tunggal</td><td class="p-3">She is beautiful</td></tr>
+                            <tr><td class="p-3 font-medium text-sky-600">It</td><td class="p-3">Itu/Dia</td><td class="p-3">Benda/hewan</td><td class="p-3">It is a cat</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="quiz">
+                    <h3 class="text-xl font-bold mb-4 flex items-center gap-2">
+                        <i class="fa-solid fa-pen-to-square text-sky-600"></i>
+                        Latihan: Pilihan Ganda & Isian
+                    </h3>
+                    <div class="space-y-6" id="quiz-1"></div>
+                    <div id="quiz-feedback-1" class="mt-6 hidden"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Topic 3: Tenses -->
+        <div id="topic-2" class="tab-content">
+            <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-6 sm:p-8 mb-6">
+                <div class="flex items-start gap-4 mb-6">
+                    <div class="w-14 h-14 gradient-bg rounded-2xl flex items-center justify-center text-white shrink-0">
+                        <i class="fa-solid fa-clock text-xl"></i>
+                    </div>
+                    <div class="flex-1">
+                        <h2 class="text-2xl sm:text-3xl font-bold mb-2">3. Fungsi 12 Tenses</h2>
+                        <p class="text-slate-600">Tenses menunjukkan kapan kejadian terjadi</p>
+                        <div class="mt-3 flex items-center gap-2">
+                            <span class="text-sm font-medium">Skor:</span>
+                            <span class="px-3 py-1 bg-sky-100 text-sky-700 rounded-full text-sm font-semibold" id="score-2">0/5</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-4 mb-8">
+                    <div class="bg-blue-50 p-4 rounded-xl border border-blue-200">
+                        <h4 class="font-bold text-blue-900 mb-1">Present Simple</h4>
+                        <p class="text-xs text-blue-700">Kebiasaan, fakta umum</p>
+                        <p class="text-xs mt-2 bg-white p-2 rounded">I eat every day</p>
+                    </div>
+                    <div class="bg-amber-50 p-4 rounded-xl border border-amber-200">
+                        <h4 class="font-bold text-amber-900 mb-1">Past Simple</h4>
+                        <p class="text-xs text-amber-700">Selesai di masa lalu</p>
+                        <p class="text-xs mt-2 bg-white p-2 rounded">I ate yesterday</p>
+                    </div>
+                    <div class="bg-green-50 p-4 rounded-xl border border-green-200">
+                        <h4 class="font-bold text-green-900 mb-1">Future Simple</h4>
+                        <p class="text-xs text-green-700">Akan terjadi</p>
+                        <p class="text-xs mt-2 bg-white p-2 rounded">I will eat tomorrow</p>
+                    </div>
+                    <div class="bg-purple-50 p-4 rounded-xl border border-purple-200">
+                        <h4 class="font-bold text-purple-900 mb-1">Present Continuous</h4>
+                        <p class="text-xs text-purple-700">Sedang berlangsung</p>
+                        <p class="text-xs mt-2 bg-white p-2 rounded">I am eating now</p>
+                    </div>
+                    <div class="bg-pink-50 p-4 rounded-xl border border-pink-200">
+                        <h4 class="font-bold text-pink-900 mb-1">Past Continuous</h4>
+                        <p class="text-xs text-pink-700">Sedang terjadi di masa lalu</p>
+                        <p class="text-xs mt-2 bg-white p-2 rounded">I was eating</p>
+                    </div>
+                    <div class="bg-teal-50 p-4 rounded-xl border border-teal-200">
+                        <h4 class="font-bold text-teal-900 mb-1">Present Perfect</h4>
+                        <p class="text-xs text-teal-700">Sudah selesai, hasil terasa</p>
+                        <p class="text-xs mt-2 bg-white p-2 rounded">I have eaten</p>
+                    </div>
+                </div>
+
+                <div class="quiz">
+                    <h3 class="text-xl font-bold mb-4 flex items-center gap-2">
+                        <i class="fa-solid fa-pen-to-square text-sky-600"></i>
+                        Latihan: Cocokkan Fungsi Tenses
+                    </h3>
+                    <div class="space-y-6" id="quiz-2"></div>
+                    <div id="quiz-feedback-2" class="mt-6 hidden"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Topic 4: Verb, Adverb, Adjective -->
+        <div id="topic-3" class="tab-content">
+            <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-6 sm:p-8 mb-6">
+                <div class="flex items-start gap-4 mb-6">
+                    <div class="w-14 h-14 gradient-bg rounded-2xl flex items-center justify-center text-white shrink-0">
+                        <i class="fa-solid fa-shapes text-xl"></i>
+                    </div>
+                    <div class="flex-1">
+                        <h2 class="text-2xl sm:text-3xl font-bold mb-2">4. Bedakan Verb, Adverb, Adjective</h2>
+                        <p class="text-slate-600">3 jenis kata penting dalam Bahasa Inggris</p>
+                        <div class="mt-3 flex items-center gap-2">
+                            <span class="text-sm font-medium">Skor:</span>
+                            <span class="px-3 py-1 bg-sky-100 text-sky-700 rounded-full text-sm font-semibold" id="score-3">0/8</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="space-y-4 mb-8">
+                    <div class="bg-red-50 border-2 border-red-200 p-5 rounded-xl">
+                        <h3 class="font-bold text-lg text-red-900 mb-2">1. VERB (Kata Kerja)</h3>
+                        <p class="text-sm mb-2"><strong>Ciri:</strong> Menunjukkan aksi, tindakan, atau keadaan</p>
+                        <p class="text-sm bg-white p-2 rounded"><strong>Contoh:</strong> run, eat, study, is, are, have, sleep</p>
+                        <p class="text-xs mt-2 text-red-700">→ She <span class="font-bold">runs</span> fast</p>
+                    </div>
+                    <div class="bg-blue-50 border-2 border-blue-200 p-5 rounded-xl">
+                        <h3 class="font-bold text-lg text-blue-900 mb-2">2. ADJECTIVE (Kata Sifat)</h3>
+                        <p class="text-sm mb-2"><strong>Ciri:</strong> Menjelaskan sifat/kondisi kata benda (noun)</p>
+                        <p class="text-sm bg-white p-2 rounded"><strong>Contoh:</strong> beautiful, tall, smart, happy, big</p>
+                        <p class="text-xs mt-2 text-blue-700">→ She is a <span class="font-bold">beautiful</span> girl</p>
+                    </div>
+                    <div class="bg-green-50 border-2 border-green-200 p-5 rounded-xl">
+                        <h3 class="font-bold text-lg text-green-900 mb-2">3. ADVERB (Kata Keterangan)</h3>
+                        <p class="text-sm mb-2"><strong>Ciri:</strong> Menjelaskan kata kerja, sifat, atau adverb lain. Banyak berakhiran -ly</p>
+                        <p class="text-sm bg-white p-2 rounded"><strong>Contoh:</strong> quickly, very, always, well, carefully</p>
+                        <p class="text-xs mt-2 text-green-700">→ She runs <span class="font-bold">quickly</span></p>
+                    </div>
+                </div>
+
+                <div class="quiz">
+                    <h3 class="text-xl font-bold mb-4 flex items-center gap-2">
+                        <i class="fa-solid fa-pen-to-square text-sky-600"></i>
+                        Latihan: Identifikasi Jenis Kata
+                    </h3>
+                    <div class="space-y-6" id="quiz-3"></div>
+                    <div id="quiz-feedback-3" class="mt-6 hidden"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Topic 5: Verb 1, 2, 3 -->
+        <div id="topic-4" class="tab-content">
+            <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-6 sm:p-8 mb-6">
+                <div class="flex items-start gap-4 mb-6">
+                    <div class="w-14 h-14 gradient-bg rounded-2xl flex items-center justify-center text-white shrink-0">
+                        <i class="fa-solid fa-list-ol text-xl"></i>
+                    </div>
+                    <div class="flex-1">
+                        <h2 class="text-2xl sm:text-3xl font-bold mb-2">5. Verb 1, 2, 3</h2>
+                        <p class="text-slate-600">Present, Past, Past Participle - Irregular Verbs</p>
+                        <div class="mt-3 flex items-center gap-2">
+                            <span class="text-sm font-medium">Skor:</span>
+                            <span class="px-3 py-1 bg-sky-100 text-sky-700 rounded-full text-sm font-semibold" id="score-4">0/10</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="overflow-x-auto mb-8">
+                    <table class="w-full text-sm">
+                        <thead class="bg-sky-50">
+                            <tr>
+                                <th class="p-3 text-left font-semibold">V1 (Present)</th>
+                                <th class="p-3 text-left font-semibold">V2 (Past)</th>
+                                <th class="p-3 text-left font-semibold">V3 (Past Participle)</th>
+                                <th class="p-3 text-left font-semibold">Arti</th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y divide-slate-200">
+                            <tr><td class="p-3 font-medium">go</td><td class="p-3">went</td><td class="p-3">gone</td><td class="p-3">pergi</td></tr>
+                            <tr><td class="p-3 font-medium">eat</td><td class="p-3">ate</td><td class="p-3">eaten</td><td class="p-3">makan</td></tr>
+                            <tr><td class="p-3 font-medium">write</td><td class="p-3">wrote</td><td class="p-3">written</td><td class="p-3">menulis</td></tr>
+                            <tr><td class="p-3 font-medium">see</td><td class="p-3">saw</td><td class="p-3">seen</td><td class="p-3">melihat</td></tr>
+                            <tr><td class="p-3 font-medium">take</td><td class="p-3">took</td><td class="p-3">taken</td><td class="p-3">mengambil</td></tr>
+                            <tr><td class="p-3 font-medium">give</td><td class="p-3">gave</td><td class="p-3">given</td><td class="p-3">memberi</td></tr>
+                            <tr><td class="p-3 font-medium">come</td><td class="p-3">came</td><td class="p-3">come</td><td class="p-3">datang</td></tr>
+                            <tr><td class="p-3 font-medium">know</td><td class="p-3">knew</td><td class="p-3">known</td><td class="p-3">tahu</td></tr>
+                            <tr><td class="p-3 font-medium">think</td><td class="p-3">thought</td><td class="p-3">thought</td><td class="p-3">berpikir</td></tr>
+                            <tr><td class="p-3 font-medium">buy</td><td class="p-3">bought</td><td class="p-3">bought</td><td class="p-3">membeli</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="quiz">
+                    <h3 class="text-xl font-bold mb-4 flex items-center gap-2">
+                        <i class="fa-solid fa-pen-to-square text-sky-600"></i>
+                        Latihan: Ubah V1 ke V2 atau V3
+                    </h3>
+                    <div class="space-y-6" id="quiz-4"></div>
+                    <div id="quiz-feedback-4" class="mt-6 hidden"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Topic 6: 1 Kalimat Bertenses -->
+        <div id="topic-5" class="tab-content">
+            <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-6 sm:p-8 mb-6">
+                <div class="flex items-start gap-4 mb-6">
+                    <div class="w-14 h-14 gradient-bg rounded-2xl flex items-center justify-center text-white shrink-0">
+                        <i class="fa-solid fa-message text-xl"></i>
+                    </div>
+                    <div class="flex-1">
+                        <h2 class="text-2xl sm:text-3xl font-bold mb-2">6. 1 Kalimat Bertenses</h2>
+                        <p class="text-slate-600">Membuat kalimat lengkap Simple Present/Past/Future</p>
+                        <div class="mt-3 flex items-center gap-2">
+                            <span class="text-sm font-medium">Skor:</span>
+                            <span class="px-3 py-1 bg-sky-100 text-sky-700 rounded-full text-sm font-semibold" id="score-5">0/5</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="space-y-4 mb-8">
+                    <div class="bg-blue-50 p-5 rounded-xl border-l-4 border-blue-500">
+                        <h3 class="font-bold text-blue-900 mb-2">Simple Present (+)</h3>
+                        <p class="text-sm mb-2"><strong>Rumus:</strong> S + V1 (+s/es untuk He/She/It) + O</p>
+                        <div class="bg-white p-3 rounded text-sm space-y-1">
+                            <p>• I <span class="text-blue-600 font-semibold">play</span> football every day</p>
+                            <p>• She <span class="text-blue-600 font-semibold">plays</span> football every day</p>
+                        </div>
+                    </div>
+                    <div class="bg-amber-50 p-5 rounded-xl border-l-4 border-amber-500">
+                        <h3 class="font-bold text-amber-900 mb-2">Simple Past (+)</h3>
+                        <p class="text-sm mb-2"><strong>Rumus:</strong> S + V2 + O</p>
+                        <div class="bg-white p-3 rounded text-sm">
+                            <p>• I <span class="text-amber-600 font-semibold">played</span> football yesterday</p>
+                            <p>• She <span class="text-amber-600 font-semibold">went</span> to school yesterday</p>
+                        </div>
+                    </div>
+                    <div class="bg-green-50 p-5 rounded-xl border-l-4 border-green-500">
+                        <h3 class="font-bold text-green-900 mb-2">Simple Future (+)</h3>
+                        <p class="text-sm mb-2"><strong>Rumus:</strong> S + will + V1 + O</p>
+                        <div class="bg-white p-3 rounded text-sm">
+                            <p>• I <span class="text-green-600 font-semibold">will play</span> football tomorrow</p>
+                            <p>• She <span class="text-green-600 font-semibold">will go</span> to Bali next week</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="quiz">
+                    <h3 class="text-xl font-bold mb-4 flex items-center gap-2">
+                        <i class="fa-solid fa-pen-to-square text-sky-600"></i>
+                        Latihan: Buat Kalimat Bertenses
+                    </h3>
+                    <div class="space-y-6" id="quiz-5"></div>
+                    <div id="quiz-feedback-5" class="mt-6 hidden"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Topic 7: Kalimat Bersarang Bertenses -->
+        <div id="topic-6" class="tab-content">
+            <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-6 sm:p-8 mb-6">
+                <div class="flex items-start gap-4 mb-6">
+                    <div class="w-14 h-14 gradient-bg rounded-2xl flex items-center justify-center text-white shrink-0">
+                        <i class="fa-solid fa-diagram-project text-xl"></i>
+                    </div>
+                    <div class="flex-1">
+                        <h2 class="text-2xl sm:text-3xl font-bold mb-2">7. Kalimat Bersarang Bertenses</h2>
+                        <p class="text-slate-600">Gabungan 2 klausa dengan tenses yang tepat di tiap klausa</p>
+                        <div class="mt-3 flex items-center gap-2">
+                            <span class="text-sm font-medium">Skor:</span>
+                            <span class="px-3 py-1 bg-sky-100 text-sky-700 rounded-full text-sm font-semibold" id="score-6">0/3</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="bg-sky-50 border-l-4 border-sky-500 p-4 rounded-r-lg mb-6">
+                    <p class="font-semibold text-sky-900 mb-2">Aturan Penting</p>
+                    <p class="text-sm">Tiap klausa punya verb sendiri dengan tenses masing-masing. Perhatikan kesesuaian waktu. Contoh: Present + Past, Past + Future, dll.</p>
+                </div>
+
+                <div class="space-y-4 mb-8">
+                    <div class="bg-slate-50 p-5 rounded-xl border border-slate-200">
+                        <h3 class="font-semibold text-slate-900 mb-2">Contoh 1: Present + Present</h3>
+                        <p class="text-sky-700 font-medium mb-1">I believe <span class="bg-yellow-200 px-1 rounded">that</span> she <span class="underline">works</span> hard.</p>
+                        <p class="text-sm text-slate-600">Aku percaya bahwa dia bekerja keras.</p>
+                        <p class="text-xs text-slate-500 mt-2">→ believe (V1), works (V1 + s untuk She)</p>
+                    </div>
+                    <div class="bg-slate-50 p-5 rounded-xl border border-slate-200">
+                        <h3 class="font-semibold text-slate-900 mb-2">Contoh 2: Past + Past</h3>
+                        <p class="text-sky-700 font-medium mb-1">He said <span class="bg-yellow-200 px-1 rounded">that</span> they <span class="underline">went</span> home.</p>
+                        <p class="text-sm text-slate-600">Dia berkata bahwa mereka pulang.</p>
+                        <p class="text-xs text-slate-500 mt-2">→ said (V2), went (V2)</p>
+                    </div>
+                    <div class="bg-slate-50 p-5 rounded-xl border border-slate-200">
+                        <h3 class="font-semibold text-slate-900 mb-2">Contoh 3: Present + Future</h3>
+                        <p class="text-sky-700 font-medium mb-1">I hope <span class="bg-yellow-200 px-1 rounded">that</span> you <span class="underline">will succeed</span>.</p>
+                        <p class="text-sm text-slate-600">Aku harap kamu akan sukses.</p>
+                        <p class="text-xs text-slate-500 mt-2">→ hope (V1), will succeed (Future)</p>
+                    </div>
+                </div>
+
+                <div class="quiz">
+                    <h3 class="text-xl font-bold mb-4 flex items-center gap-2">
+                        <i class="fa-solid fa-pen-to-square text-sky-600"></i>
+                        Latihan Final: Kalimat Kompleks
+                    </h3>
+                    <div class="space-y-6" id="quiz-6"></div>
+                    <div id="quiz-feedback-6" class="mt-6 hidden"></div>
+                </div>
+
+                <div class="bg-gradient-to-r from-emerald-500 to-teal-600 rounded-2xl shadow-lg p-8 text-white text-center mt-8">
+                    <i class="fa-solid fa-trophy text-5xl mb-4"></i>
+                    <h3 class="text-2xl font-bold mb-2">Selamat!</h3>
+                    <p class="text-white/90">Kamu telah menyelesaikan 7 langkah dasar Bahasa Inggris. Terus berlatih untuk menjadi lebih mahir! 💪</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Navigation Buttons -->
+        <div class="flex justify-between items-center mt-8 gap-4">
+            <button id="prev-btn" onclick="prevTopic()" class="flex items-center gap-2 px-5 py-3 bg-white border-2 border-slate-300 hover:border-sky-400 text-slate-700 rounded-xl font-medium transition-all disabled:opacity-50 disabled:cursor-not-allowed">
+                <i class="fa-solid fa-arrow-left"></i>
+                <span class="hidden sm:inline">Sebelumnya</span>
+            </button>
+            <span class="text-sm text-slate-500 font-medium">Topik <span id="current-topic">1</span> dari 7</span>
+            <button id="next-btn" onclick="nextTopic()" class="flex items-center gap-2 px-5 py-3 bg-sky-600 hover:bg-sky-700 text-white rounded-xl font-medium transition-all shadow-sm hover:shadow">
+                <span class="hidden sm:inline">Selanjutnya</span>
+                <i class="fa-solid fa-arrow-right"></i>
+            </button>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="mt-16 bg-slate-900 text-slate-400 py-8">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 text-center text-sm">
+            <p>© 2024 EnglishPro 7 Langkah. Dibuat untuk membantu kamu belajar Bahasa Inggris dengan mudah dan terstruktur.</p>
+        </div>
+    </footer>
+
+    <script>
+        let currentTopic = 0;
+        const totalTopics = 7;
+        let scores = [0, 0, 0, 0, 0, 0, 0];
+        let totalQuestions = [5, 7, 5, 8, 10, 5, 3];
+        let answered = Array(7).fill(null).map(() => new Set());
+
+        // Quiz Data
+        const quizData = [
+            // Topic 1: Kalimat Bersarang - 5 soal
+            [
+                {
+                    type: 'mc',
+                    q: 'Manakah yang merupakan Main Clause dari kalimat: "I think that he is smart"?',
+                    options: ['a) I think', 'b) that he is smart', 'c) he is smart'],
+                    answer: 'a'
+                },
+                {
+                    type: 'mc',
+                    q: 'Kata penghubung yang tepat untuk: "The book ___ I borrowed is new"',
+                    options: ['a) because', 'b) which', 'c) although'],
+                    answer: 'b'
+                },
+                {
+                    type: 'mc',
+                    q: 'Sub Clause dari "She cried because she was sad" adalah:',
+                    options: ['a) She cried', 'b) because she was sad', 'c) she was sad'],
+                    answer: 'b'
+                },
+                {
+                    type: 'mc',
+                    q: 'Pilih kalimat bersarang yang benar:',
+                    options: ['a) I am happy and sad', 'b) I know that you study', 'c) She runs fast'],
+                    answer: 'b'
+                },
+                {
+                    type: 'mc',
+                    q: 'Main Clause dari "Although it rained, we went out" adalah:',
+                    options: ['a) Although it rained', 'b) we went out', 'c) it rained'],
+                    answer: 'b'
+                }
+            ],
+            // Topic 2: Kata Ganti - 7 soal
+            [
+                {type: 'mc', q: '"___ are my friends" (untuk 3 orang teman)', options: ['a) He', 'b) She', 'c) They'], answer: 'c'},
+                {type: 'mc', q: 'Kata ganti untuk "My mother" adalah:', options: ['a) He', 'b) She', 'c) It'], answer: 'b'},
+                {type: 'mc', q: '"___ am learning English" (untuk diri sendiri)', options: ['a) I', 'b) You', 'c) He'], answer: 'a'},
+                {type: 'mc', q: 'Kata ganti untuk "The cat" adalah:', options: ['a) He', 'b) She', 'c) It'], answer: 'c'},
+                {type: 'fill', q: 'Lengkapi: "___ is a doctor" (untuk ayahmu)', answer: 'he'},
+                {type: 'fill', q: 'Lengkapi: "___ are students" (untuk saya dan teman saya)', answer: 'we'},
+                {type: 'mc', q: 'Kata ganti untuk "Ali and Budi" adalah:', options: ['a) He', 'b) They', 'c) We'], answer: 'b'}
+            ],
+            // Topic 3: Tenses - 5 soal
+            [
+                {type: 'mc', q: 'Tenses yang tepat untuk kebiasaan sehari-hari:', options: ['a) Past Simple', 'b) Present Simple', 'c) Future Simple'], answer: 'b'},
+                {type: 'mc', q: '"She is studying now" menunjukkan:', options: ['a) Kebiasaan', 'b) Sedang berlangsung', 'c) Sudah selesai'], answer: 'b'},
+                {type: 'mc', q: 'Fungsi Past Simple adalah untuk kejadian:', options: ['a) Yang akan terjadi', 'b) Yang selesai di masa lalu', 'c) Yang sedang terjadi'], answer: 'b'},
+                {type: 'mc', q: '"I have finished my homework" adalah contoh:', options: ['a) Present Perfect', 'b) Past Simple', 'c) Future Simple'], answer: 'a'},
+                {type: 'mc', q: 'Kalimat "They will come tomorrow" menggunakan:', options: ['a) Present Simple', 'b) Past Simple', 'c) Future Simple'], answer: 'c'}
+            ],
+            // Topic 4: Verb/Adv/Adj - 8 soal
+            [
+                {type: 'mc', q: 'Dalam kalimat "He runs quickly", kata "quickly" adalah:', options: ['a) Verb', 'b) Adjective', 'c) Adverb'], answer: 'c'},
+                {type: 'mc', q: 'Dalam "She is beautiful", kata "beautiful" adalah:', options: ['a) Verb', 'b) Adjective', 'c) Adverb'], answer: 'b'},
+                {type: 'mc', q: 'Dalam "They study hard", kata "study" adalah:', options: ['a) Verb', 'b) Adjective', 'c) Adverb'], answer: 'a'},
+                {type: 'mc', q: 'Kata yang menjelaskan kata benda adalah:', options: ['a) Verb', 'b) Adjective', 'c) Adverb'], answer: 'b'},
+                {type: 'mc', q: 'Kata "always" dalam "I always eat rice" adalah:', options: ['a) Verb', 'b) Adjective', 'c) Adverb'], answer: 'c'},
+                {type: 'mc', q: 'Dalam "The big house", kata "big" adalah:', options: ['a) Verb', 'b) Adjective', 'c) Adverb'], answer: 'b'},
+                {type: 'mc', q: 'Kata kerja dalam "She sings beautifully" adalah:', options: ['a) She', 'b) sings', 'c) beautifully'], answer: 'b'},
+                {type: 'mc', q: 'Kata "very" dalam "very tall" adalah:', options: ['a) Verb', 'b) Adjective', 'c) Adverb'], answer: 'c'}
+            ],
+            // Topic 5: Verb 1,2,3 - 10 soal
+            [
+                {type: 'fill', q: 'Verb 2 dari "go" adalah:', answer: 'went'},
+                {type: 'fill', q: 'Verb 3 dari "eat" adalah:', answer: 'eaten'},
+                {type: 'fill', q: 'Verb 2 dari "write" adalah:', answer: 'wrote'},
+                {type: 'fill', q: 'Verb 3 dari "see" adalah:', answer: 'seen'},
+                {type: 'fill', q: 'Verb 2 dari "take" adalah:', answer: 'took'},
+                {type: 'fill', q: 'Verb 3 dari "give" adalah:', answer: 'given'},
+                {type: 'fill', q: 'Verb 2 dari "come" adalah:', answer: 'came'},
+                {type: 'fill', q: 'Verb 3 dari "know" adalah:', answer: 'known'},
+                {type: 'fill', q: 'Verb 2 dari "think" adalah:', answer: 'thought'},
+                {type: 'fill', q: 'Verb 3 dari "buy" adalah:', answer: 'bought'}
+            ],
+            // Topic 6: 1 Kalimat Bertenses - 5 soal
+            [
+                {type: 'mc', q: 'Kalimat Present Simple yang benar:', options: ['a) She play football', 'b) She plays football', 'c) She playing football'], answer: 'b'},
+                {type: 'mc', q: 'Kalimat Past Simple yang benar:', options: ['a) I go yesterday', 'b) I went yesterday', 'c) I will go yesterday'], answer: 'b'},
+                {type: 'mc', q: 'Kalimat Future Simple yang benar:', options: ['a) I go tomorrow', 'b) I went tomorrow', 'c) I will go tomorrow'], answer: 'c'},
+                {type: 'mc', q: '"They ___ English every day" (Present)', options: ['a) study', 'b) studies', 'c) studied'], answer: 'a'},
+                {type: 'mc', q: '"We ___ to Bali last week" (Past)', options: ['a) go', 'b) went', 'c) will go'], answer: 'b'}
+            ],
+            // Topic 7: Kalimat Bersarang Bertenses - 3 soal
+            [
+                {type: 'mc', q: 'Pilih kalimat kompleks yang benar:', options: ['a) I know that she go to school', 'b) I know that she goes to school', 'c) I know that she going to school'], answer: 'b'},
+                {type: 'mc', q: '"He told me that he ___ the exam yesterday"', options: ['a) passed', 'b) pass', 'c) will pass'], answer: 'a'},
+                {type: 'mc', q: '"I think that they ___ tomorrow"', options: ['a) come', 'b) came', 'c) will come'], answer: 'c'}
+            ]
+        ];
+
+        function switchTab(index) {
+            currentTopic = index;
+            document.querySelectorAll('.tab-content').forEach((content, i) => {
+                content.classList.toggle('active', i === index);
+            });
+            
+            document.querySelectorAll('.tab-btn').forEach((btn, i) => {
+                btn.classList.toggle('active', i === index);
+                if (i === index) {
+                    btn.querySelector('span').classList.add('bg-white/30');
+                    btn.querySelector('span').classList.remove('bg-slate-200');
+                } else {
+                    btn.classList.remove('text-white');
+                    btn.classList.add('text-slate-600');
+                    btn.querySelector('span').classList.remove('bg-white/30');
+                    btn.querySelector('span').classList.add('bg-slate-200');
+                }
+            });
+
+            document.getElementById('current-topic').textContent = index + 1;
+            document.getElementById('prev-btn').disabled = index === 0;
+            document.getElementById('next-btn').disabled = index === totalTopics - 1;
+            
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+            
+            if (!answered[index].size) renderQuiz(index);
+        }
+
+        function nextTopic() {
+            if (currentTopic < totalTopics - 1) {
+                switchTab(currentTopic + 1);
+            }
+        }
+
+        function prevTopic() {
+            if (currentTopic > 0) {
+                switchTab(currentTopic - 1);
+            }
+        }
+
+        function updateProgress() {
+            const totalScore = scores.reduce((a, b) => a + b, 0);
+            const totalMax = totalQuestions.reduce((a, b) => a + b, 0);
+            const percent = Math.round((totalScore / totalMax) * 100);
+            
+            document.getElementById('total-score').textContent = totalScore;
+            document.getElementById('total-percent').textContent = percent + '%';
+            document.getElementById('progress-bar').style.width = percent + '%';
+        }
+
+        function renderQuiz(topicIndex) {
+            const container = document.getElementById(`quiz-${topicIndex}`);
+            container.innerHTML = '';
+            
+            quizData[topicIndex].forEach((item, qIndex) => {
+                const div = document.createElement('div');
+                div.className = 'bg-slate-50 p-5 rounded-xl border border-slate-200';
+                
+                if (item.type === 'mc') {
+                    div.innerHTML = `
+                        <p class="font-medium mb-4">${qIndex + 1}. ${item.q}</p>
+                        <div class="space-y-2" data-q="${qIndex}">
+                            ${item.options.map((opt, i) => {
+                                const letter = String.fromCharCode(97 + i);
+                                return `<button class="quiz-option w-full text-left p-3 rounded-lg border-2 border-slate-200 bg-white" onclick="selectOption(${topicIndex}, ${qIndex}, '${letter}')" data-letter="${letter}">${opt}</button>`;
+                            }).join('')}
+                        </div>
+                        <button onclick="checkAnswer(${topicIndex}, ${qIndex})" class="mt-4 px-5 py-2.5 bg-sky-600 hover:bg-sky-700 text-white rounded-lg font-medium transition-all text-sm">Cek Jawaban</button>
+                        <div class="feedback mt-3 hidden"></div>
+                    `;
+                } else if (item.type === 'fill') {
+                    div.innerHTML = `
+                        <p class="font-medium mb-4">${qIndex + 1}. ${item.q}</p>
+                        <div class="flex gap-2 flex-col sm:flex-row">
+                            <input type="text" class="answer-input flex-1 px-4 py-2.5 border-2 border-slate-300 rounded-lg" placeholder="Ketik jawaban..." data-q="${qIndex}">
+                            <button onclick="checkAnswer(${topicIndex}, ${qIndex})" class="px-5 py-2.5 bg-sky-600 hover:bg-sky-700 text-white rounded-lg font-medium transition-all text-sm whitespace-nowrap">Cek Jawaban</button>
+                        </div>
+                        <div class="feedback mt-3 hidden"></div>
+                    `;
+                }
+                container.appendChild(div);
+            });
+        }
+
+        function selectOption(topicIndex, qIndex, letter) {
+            const container = document.querySelector(`#quiz-${topicIndex} [data-q="${qIndex}"]`);
+            container.querySelectorAll('.quiz-option').forEach(btn => {
+                btn.classList.remove('selected');
+            });
+            container.querySelector(`[data-letter="${letter}"]`).classList.add('selected');
+        }
+
+        function checkAnswer(topicIndex, qIndex) {
+            if (answered[topicIndex].has(qIndex)) return;
+            
+            const item = quizData[topicIndex][qIndex];
+            const container = document.querySelector(`#quiz-${topicIndex} > div:nth-child(${qIndex + 1})`);
+            const feedback = container.querySelector('.feedback');
+            let isCorrect = false;
+            
+            if (item.type === 'mc') {
+                const selected = container.querySelector('.quiz-option.selected');
+                if (!selected) {
+                    feedback.innerHTML = `<div class="bg-amber-50 border border-amber-200 rounded-lg p-3 text-sm text-amber-700">⚠️ Pilih jawaban dulu!</div>`;
+                    feedback.classList.remove('hidden');
+                    return;
+                }
+                
+                const selectedLetter = selected.dataset.letter;
+                isCorrect = selectedLetter === item.answer;
+                
+                container.querySelectorAll('.quiz-option').forEach(btn => {
+                    btn.classList.add('disabled');
+                    if (btn.dataset.letter === item.answer) {
+                        btn.classList.add('correct');
+                    } else if (btn.dataset.letter === selectedLetter && !isCorrect) {
+                        btn.classList.add('wrong');
+                    }
+                });
+            } else if (item.type === 'fill') {
+                const input = container.querySelector('input');
+                const userAnswer = input.value.trim().toLowerCase();
+                isCorrect = userAnswer === item.answer.toLowerCase();
+                
+                input.disabled = true;
+                if (isCorrect) {
+                    input.classList.add('border-green-500', 'bg-green-50');
+                } else {
+                    input.classList.add('border-red-500', 'bg-red-50');
+                }
+            }
+            
+            if (isCorrect) {
+                scores[topicIndex]++;
+                feedback.innerHTML = `<div class="bg-green-50 border border-green-200 rounded-lg p-3 flex items-center gap-2 text-sm text-green-700"><i class="fa-solid fa-circle-check"></i><span><strong>Benar!</strong> Jawaban kamu tepat 💚</span></div>`;
+            } else {
+                const correctAnswer = item.type === 'mc' ? item.options[item.answer.charCodeAt(0) - 97] : item.answer;
+                feedback.innerHTML = `<div class="bg-red-50 border border-red-200 rounded-lg p-3 flex items-center gap-2 text-sm text-red-700"><i class="fa-solid fa-circle-xmark"></i><span><strong>Salah.</strong> Jawaban yang benar: ${correctAnswer}</span></div>`;
+            }
+            
+            feedback.classList.remove('hidden');
+            container.querySelector('button').disabled = true;
+            container.querySelector('button').classList.add('opacity-50', 'cursor-not-allowed');
+            answered[topicIndex].add(qIndex);
+            
+            document.getElementById(`score-${topicIndex}`).textContent = `${scores[topicIndex]}/${totalQuestions[topicIndex]}`;
+            updateProgress();
+            
+            if (answered[topicIndex].size === totalQuestions[topicIndex]) {
+                const topicFeedback = document.getElementById(`quiz-feedback-${topicIndex}`);
+                const scorePercent = Math.round((scores[topicIndex] / totalQuestions[topicIndex]) * 100);
+                topicFeedback.innerHTML = `
+                    <div class="bg-gradient-to-r from-sky-500 to-emerald-500 rounded-xl p-5 text-white">
+                        <div class="flex items-center gap-3 mb-2">
+                            <i class="fa-solid fa-award text-2xl"></i>
+                            <div>
+                                <p class="font-bold text-lg">Topik Selesai!</p>
+                                <p class="text-sm text-white/90">Skor: ${scores[topicIndex]}/${totalQuestions[topicIndex]} (${scorePercent}%)</p>
+                            </div>
+                        </div>
+                        <p class="text-sm text-white/90">${scorePercent >= 80 ? 'Hebat! Kamu menguasai topik ini 🎉' : scorePercent >= 60 ? 'Bagus! Terus berlatih ya 👍' : 'Tetap semangat! Coba pelajari lagi materinya 📚'}</p>
+                    </div>
+                `;
+                topicFeedback.classList.remove('hidden');
+            }
+        }
+
+        // Init
+        switchTab(0);
+        updateProgress();
+    </script>
+<script>(function(){document.addEventListener("click",function(e){var a=e.target.closest("[data-product-id]");if(!a)return;e.preventDefault();var pid=a.getAttribute("data-product-id");if(pid)parent.postMessage({type:"ecto-artifact-link-click",productId:pid},"*")})})();</script>
+</body>
+</html>
